@@ -1,0 +1,20 @@
+hash: 0ebe0ebb6a8b7c8ba033cabc06a72a92497c21a6df89b46b68828134d951a7f7
+updated: 2017-03-15T15:09:41.513434311-04:00
+imports:
+- name: github.com/DATA-DOG/godog
+  version: cf8fbb4ad0d5fab464a5c9b79abbcfbd7c27e85b
+  subpackages:
+  - colors
+  - gherkin
+- name: github.com/davecgh/go-spew
+  version: 346938d642f2ec3594ed81d874461961cd0faa76
+  subpackages:
+  - spew
+- name: github.com/Jeffail/gabs
+  version: 2a3aa15961d5fee6047b8151b67ac2f08ba2c48c
+- name: github.com/smartystreets/assertions
+  version: e9a2f6771d97c709b2f7609fdf89ebde8b64c926
+  subpackages:
+  - internal/go-render/render
+  - internal/oglematchers
+testImports: []

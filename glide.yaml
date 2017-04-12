@@ -1,0 +1,12 @@
+package: github.com/bradobro/gocu
+ignore:
+- github.com/y0ssar1an/q
+import:
+- package: github.com/cucumber/gherkin-go
+  version: ^4.0.0
+- package: github.com/kindrid/gotest
+  version: ^1.0.0
+- package: github.com/valyala/quicktemplate
+  version: ^20160617.0.0
+  subpackages:
+  - qtc
