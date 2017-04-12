@@ -16,8 +16,6 @@ type Table interface {
 	Apply(row int, step string) string
 }
 
-
-
 // SimpleTable is a slow, stupid, table implementation, but it's easy to make literals of
 type SimpleTable [][]string
 
@@ -72,3 +70,7 @@ func (tbl *SimpleTable) Apply(row int, step string) string {
 	// TODO: replace scenario outline params
 	return step
 }
+
+// MapTable is a faster table, and probably closer to how we want to
+// express these values as code.
+type MapTable []map[string]string
