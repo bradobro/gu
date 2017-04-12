@@ -1,3 +1,5 @@
+//go:generate go build -v ./vendor/github.com/valyala/quicktemplate/qtc
+//go:generate qtc -dir ./templates
 package gocu
 
 import (
