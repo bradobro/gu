@@ -10,8 +10,8 @@ type Config struct {
 	BaseDir       string // directory prepended to non-absolute directories
 	FeatureDir    string // Gherkin .feature files are found under this directory
 	TestDir       string // Test output files are found under this directory
-	StepMapsDir   string // step map files are found under here
-	TemplatesDir  string // the particular templates are found here
+	StepMapDir    string // step map files are found under here
+	TemplateDir   string // the particular templates are found here
 	TemplateName  string // Use this base template
 	TestsTypeName string // prepended to test files
 	WorldName     string // the world (test context) class name, used to run the same steps in a different context
@@ -21,8 +21,8 @@ var DefaultConfig = Config{
 	BaseDir:       ".",           // cwd absolutized
 	FeatureDir:    "features",    //
 	TestDir:       "tests",       //
-	StepMapsDir:   ".",           // base dir
-	TemplatesDir:  "",            // if blank, use templates from cyu package
+	StepMapDir:    ".",           // base dir
+	TemplateDir:   "",            // if blank, use templates from cyu package
 	TemplateName:  "go",          // usually used for language selection
 	TestsTypeName: "Feature",     // used in comments
 	WorldName:     "TestContext", // class used to instantiate test world
@@ -48,7 +48,7 @@ func (c *Config) CheckConfig() {
 
 	fixup(&(c.FeatureDir))
 	fixup(&(c.TestDir))
-	fixup(&(c.StepMapsDir))
-	fixup(&(c.TemplatesDir)) // this maybe should be based off the executable dir?
+	fixup(&(c.StepMapDir))
+	fixup(&(c.TemplateDir)) // this maybe should be based off the executable dir?
 
 }
