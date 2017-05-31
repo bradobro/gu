@@ -1,4 +1,4 @@
-package: github.com/bradobro/gocu
+package: github.com/bradobro/cyu
 ignore:
 - github.com/y0ssar1an/q
 import:

@@ -1,4 +1,4 @@
-package gocu
+package cyu
 
 import "testing"
 

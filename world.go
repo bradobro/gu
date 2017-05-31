@@ -1,4 +1,4 @@
-package gocu
+package cyu
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 
 type StepFunc func(tbl Table, args ...string) (fail string)
 
-// World defines a test context for using gocu tests in Golang. It should probably just be templated in...maybe?
+// World defines a test context for using cyu tests in Golang. It should probably just be templated in...maybe?
 type World interface {
 	Step(step StepFunc, tbl Table, args ...string)
 	Assert(t *testing.T)
