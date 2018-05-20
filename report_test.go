@@ -69,3 +69,15 @@ func testMessageParse(t *testing.T, msg, short, long, details, meta string) {
 	testStringEqual(t, d, details)
 	testStringEqual(t, m, meta)
 }
+
+func TestReportLevels(t *testing.T) {
+	// IWBNI test output could be redirected to a buffer, but the only
+	//
+	rpt := &cyu.Reporter{T: t}
+	t.Log("Expect increasingly verbose logs:")
+	for i := cyu.VerbositySilent; i <= cyu.VerbosityInsane; i++ {
+		rpt.Verbosity = i
+		t.Logf("Verbosity = %d", i)
+		rpt.Report(cyu.VerbosityInsane, failAll, rpt, "extra 1", "extra 2")
+	}
+}

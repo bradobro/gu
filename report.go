@@ -98,12 +98,11 @@ func (r *Reporter) Report(skip int, fail string, params ...interface{}) {
 	// if StackDepth > 0 {
 	// msg += fmt.Sprintf("\nTest Failure Stack Trace: %s\n\n", debug.FormattedCallStack(StackLevel, StackDepth))
 	// }
-	if namer, ok := r.T.(Namer); ok {
-		msg += r.Sprintv(VerbosityShort, "FAILED %s: %s", namer.Name(), terseMsg)
-	} else {
-		msg += r.Sprintv(VerbosityShort, "FAILED: %s", terseMsg)
-
+	msg += r.Sprintv(VerbosityShort, "%s", "FAILED")
+	if namer, ok := r.T.(Namer); ok { // this should allow use in Go < 1.8
+		msg += r.Sprintv(VerbosityShort, " %s:", namer.Name())
 	}
+	msg += r.Sprintv(VerbosityShort, "%s", terseMsg)
 	msg += r.Sprintv(VerbosityLong, "\nEXTRA INFO: %s\n", extraMsg)
 	if len(params) > 0 {
 		msg += r.Inspectv(VerbosityActuals, "\nACTUAL", params[0])
@@ -117,6 +116,7 @@ func (r *Reporter) Report(skip int, fail string, params ...interface{}) {
 	if metaMsg != "" {
 		msg += r.Sprintv(VerbosityInsane, "\nINTERNALS (FOR DEBUGGING ASSERTIONS): %s\n", metaMsg)
 	}
+	r.Log(msg)
 }
 
 // Sprintv formats a string if Verbosity >= minLevel, otherwise returns ""
