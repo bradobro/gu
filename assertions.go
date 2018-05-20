@@ -65,7 +65,7 @@ func AllNil(params ...interface{}) (fail string) {
 
 func NoneNil(params ...interface{}) (fail string) {
 	for _, x := range params {
-		if x != nil {
+		if x == nil {
 			return "should not be nil"
 		}
 	}

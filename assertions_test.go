@@ -20,6 +20,6 @@ func TestAssertions(t *testing.T) {
 	testStringEqual(t, cyu.False(false, false, true), "expecting false, got true")
 	testStringEqual(t, cyu.AllNil(nil, nil, nil), "")
 	testStringEqual(t, cyu.AllNil(nil, "nil", nil), "should be nil")
-	// testStringEqual(t, cyu.NoneNil("nil", "nil", "nil"), "")
+	testStringEqual(t, cyu.NoneNil("nil", "nil", "nil"), "")
 	testStringEqual(t, cyu.NoneNil("nil", "nil", nil), "should not be nil")
 }

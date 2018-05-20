@@ -8,6 +8,7 @@ type T interface {
 	FailNow() // exit the current test immediately
 	Logf(format string, args ...interface{})
 }
+
 type Namer interface {
 	Name() string // need Go 1.8 for this.
 }
