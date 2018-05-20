@@ -1,4 +1,4 @@
-package au
+package gu
 
 import (
 	"fmt"

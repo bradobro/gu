@@ -1,14 +1,14 @@
-package au_test
+package gu_test
 
 import (
 	"testing"
 
-	"github.com/bradobro/au"
+	"github.com/bradobro/gu"
 )
 
 func TestReporter(t *testing.T) {
-	rpt := &au.Reporter{
-		Verbosity: au.VerbosityInsane,
+	rpt := &gu.Reporter{
+		Verbosity: gu.VerbosityInsane,
 		MaxDepth:  3,
 	}
 	rpt.Log(t, "Log from the reporter says hello.")
@@ -21,18 +21,18 @@ const (
 	detailsMsg    = "Here are some \ndetails"
 	metaMsg       = "Here are a bunch of technical details about test workings \nfor when you doubt the assertion or the runner."
 	failShort     = shortMsg
-	failLong      = au.ShortSeparator + longMsg
-	failDetails   = au.SectionSeparator + detailsMsg
-	failMeta      = au.SectionSeparator + metaMsg
+	failLong      = gu.ShortSeparator + longMsg
+	failDetails   = gu.SectionSeparator + detailsMsg
+	failMeta      = gu.SectionSeparator + metaMsg
 	failShortLong = failShort + failLong
 	failAll       = failShort + failLong + failDetails + failMeta
 
-	failShortMeta = failShort + au.ShortSeparator + au.SectionSeparator + failMeta
+	failShortMeta = failShort + gu.ShortSeparator + gu.SectionSeparator + failMeta
 )
 
 func TestFailureMessageParsing(t *testing.T) {
 	// test blank case
-	rpt := &au.Reporter{}
+	rpt := &gu.Reporter{}
 	s, l, d, m := rpt.Parse("")
 	assertEquals(t, s, "")
 	assertEquals(t, l, "")
@@ -50,9 +50,9 @@ func TestFailureMessageParsing(t *testing.T) {
 }
 
 func testMessageParse(t *testing.T, msg, short, long, details, meta string) {
-	rpt := &au.Reporter{}
+	rpt := &gu.Reporter{}
 	if msg == "" {
-		msg = au.Failure(short, long, details, meta)
+		msg = gu.Failure(short, long, details, meta)
 	}
 	s, l, d, m := rpt.Parse(msg)
 	assertEquals(t, s, short)
@@ -62,41 +62,41 @@ func testMessageParse(t *testing.T, msg, short, long, details, meta string) {
 }
 
 func TestReportLevels(t *testing.T) {
-	rpt := &au.Reporter{MaxDepth: 5}
+	rpt := &gu.Reporter{MaxDepth: 5}
 
 	ct, buf := newTestT(t)
-	rpt.Verbosity = au.VerbositySilent
+	rpt.Verbosity = gu.VerbositySilent
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
 	assertEquals(t, buf.String(), "")
 
 	ct, buf = newTestT(t)
-	rpt.Verbosity = au.VerbosityShort
+	rpt.Verbosity = gu.VerbosityShort
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
 	testStringContains(t, buf.String(), "Brief message")
 
 	ct, buf = newTestT(t)
-	rpt.Verbosity = au.VerbosityLong
+	rpt.Verbosity = gu.VerbosityLong
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
 	testStringContains(t, buf.String(), "Brief message\nEXTRA INFO: Extra message with\nseveral lines.\n")
 
 	ct, buf = newTestT(t)
-	rpt.Verbosity = au.VerbosityActuals
+	rpt.Verbosity = gu.VerbosityActuals
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
-	testStringContains(t, buf.String(), "au.Reporter{Verbosity")
+	testStringContains(t, buf.String(), "gu.Reporter{Verbosity")
 
 	ct, buf = newTestT(t)
-	rpt.Verbosity = au.VerbosityExpecteds
+	rpt.Verbosity = gu.VerbosityExpecteds
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
 	testStringContains(t, buf.String(), `"extra 1", "extra 2"`)
 
 	ct, buf = newTestT(t)
-	rpt.Verbosity = au.VerbosityDebug
+	rpt.Verbosity = gu.VerbosityDebug
 	rpt.Report(ct, 1, failAll, rpt, "extra 1", "extra 2")
 	testStringContains(t, buf.String(), "Here are some \ndetails\n")
-	testStringContains(t, buf.String(), "au/report_test.go")
+	testStringContains(t, buf.String(), "gu/report_test.go")
 
 	ct, buf = newTestT(t)
-	rpt.Verbosity = au.VerbosityInsane
+	rpt.Verbosity = gu.VerbosityInsane
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
 	testStringContains(t, buf.String(), "Here are a bunch of technical details")
 }

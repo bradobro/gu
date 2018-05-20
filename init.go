@@ -1,4 +1,4 @@
-package au
+package gu
 
 var (
 	// DefaultAsserter allows for simple assertions without creating an asserter.

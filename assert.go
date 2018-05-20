@@ -1,4 +1,4 @@
-package au
+package gu
 
 // T describes the interface provided by Go's *testing.T.
 type T interface {
