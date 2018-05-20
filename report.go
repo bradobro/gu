@@ -1,4 +1,4 @@
-package cyu
+package au
 
 import (
 	"fmt"

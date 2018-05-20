@@ -1,4 +1,4 @@
-package cyu
+package au
 
 // T describes the interface provided by Go's *testing.T.
 type T interface {

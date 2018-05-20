@@ -1,4 +1,4 @@
-package cyu_test
+package au_test
 
 import (
 	"bytes"
@@ -7,22 +7,22 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bradobro/cyu"
+	"github.com/bradobro/au"
 )
 
-func assertTrue(t cyu.T, actual bool, msg string) {
+func assertTrue(t au.T, actual bool, msg string) {
 	if !actual {
 		t.Errorf("Expected true: %s", msg)
 	}
 }
 
-func assertEquals(t cyu.T, actual, expected string) {
+func assertEquals(t au.T, actual, expected string) {
 	if actual != expected {
 		t.Errorf("Actual %#v\nExpected %#v", actual, expected)
 	}
 }
 
-func testStringContains(t cyu.T, actual, contains string) {
+func testStringContains(t au.T, actual, contains string) {
 	if !strings.Contains(actual, contains) {
 		t.Errorf("%#v\ndoes not contain %#v", actual, contains)
 	}
@@ -31,19 +31,19 @@ func testStringContains(t cyu.T, actual, contains string) {
 /*CustomT wraps a *testing.T in ways that test packages can be tested.
  */
 type CustomT struct {
-	t          cyu.T
+	t          au.T
 	NoFail     bool // if true, t.Fail* and t.Error* only mark a flag
 	Failed     bool
 	FailedFast bool
 	Writer     io.Writer
 }
 
-func NewT(t cyu.T, noFail bool, writer io.Writer) *CustomT {
+func NewT(t au.T, noFail bool, writer io.Writer) *CustomT {
 	ct := &CustomT{t: t, NoFail: noFail, Writer: writer}
 	return ct
 }
 
-func newTestT(t cyu.T) (*CustomT, *bytes.Buffer) {
+func newTestT(t au.T) (*CustomT, *bytes.Buffer) {
 	var buf bytes.Buffer
 	ct := NewT(t, true, &buf)
 	return ct, &buf
@@ -102,26 +102,26 @@ func (t *CustomT) Logf(format string, args ...interface{}) {
 func TestAssert(t *testing.T) {
 	ct, _ := newTestT(t)
 
-	tt := cyu.NewAsserter(false, 4, cyu.VerbosityInsane)
+	tt := au.NewAsserter(false, 4, au.VerbosityInsane)
 	x := 5
 	y := x + 1
 
-	tt.Assert(ct, cyu.Equal, x, x)
-	tt.Assert(ct, cyu.Unequal, x, y)
+	tt.Assert(ct, au.Equal, x, x)
+	tt.Assert(ct, au.Unequal, x, y)
 	assertTrue(t, !(ct.Failed || ct.FailedFast), "these tests shouldn't have failed")
 
-	tt.Assert(ct, cyu.Equal, x, y)
+	tt.Assert(ct, au.Equal, x, y)
 	assertTrue(t, ct.Failed, "this test should have failed")
 	assertTrue(t, !ct.FailedFast, "this test should not have failed fast")
 
 	ct.Failed = false
 	tt.FailFast = true
-	tt.Assert(ct, cyu.Equal, x, y)
+	tt.Assert(ct, au.Equal, x, y)
 	assertTrue(t, ct.Failed, "this test should have failed")
 	assertTrue(t, ct.FailedFast, "this test should have failed fast")
 }
 
 // func TestTweakStackDepth(t *testing.T) {
-// 	a := cyu.NewAsserter(t, false, 25, cyu.VerbosityInsane)
-// 	a.Assert(cyu.Equal, 2, 5)
+// 	a := au.NewAsserter(t, false, 25, au.VerbosityInsane)
+// 	a.Assert(au.Equal, 2, 5)
 // }

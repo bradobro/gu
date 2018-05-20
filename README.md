@@ -1,4 +1,4 @@
-# Cyu: composable unit and bdd testing in Go.
+# au: composable unit and bdd testing in Go.
 
 https://github.com/DATA-DOG/godog is official and much more developed, but it takes a very non-go-spirited approach to testing. It had to--`go test` was very limited.
 
