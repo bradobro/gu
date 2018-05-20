@@ -57,24 +57,8 @@ func splitShortLong(s string) (short, long string) {
 	return
 }
 
-// ParseFailure divides a failure message into parts that may be muted depending on verbosity levels
-func ParseFailure(msg string) (short, long, details, meta string) {
-	if msg == "" {
-		return
-	}
-	secs := strings.Split(msg, SectionSeparator)
-	short, long = splitShortLong(secs[0])
-	if len(secs) > 1 {
-		details = trim(secs[1])
-	}
-	if len(secs) > 2 {
-		meta = trim(secs[2])
-	}
-	return
-}
-
-// FormatFailure creates a failure message from its components
-func FormatFailure(short, long, details, meta string) (result string) {
+// Failure creates a failure message from its components
+func Failure(short, long, details, meta string) (result string) {
 	result = short + ShortSeparator + long + SectionSeparator + details + SectionSeparator + meta
 	return
 }
@@ -92,9 +76,25 @@ func (r *Reporter) Log(message string) {
 	r.T.Logf("%s", message)
 }
 
+// Parse divides a failure message into parts that may be muted depending on verbosity levels
+func (r *Reporter) Parse(msg string) (short, long, details, meta string) {
+	if msg == "" {
+		return
+	}
+	secs := strings.Split(msg, SectionSeparator)
+	short, long = splitShortLong(secs[0])
+	if len(secs) > 1 {
+		details = trim(secs[1])
+	}
+	if len(secs) > 2 {
+		meta = trim(secs[2])
+	}
+	return
+}
+
 func (r *Reporter) Report(skip int, fail string, params ...interface{}) {
 	var msg string
-	terseMsg, extraMsg, detailsMsg, metaMsg := ParseFailure(fail)
+	terseMsg, extraMsg, detailsMsg, metaMsg := r.Parse(fail)
 	// if StackDepth > 0 {
 	// msg += fmt.Sprintf("\nTest Failure Stack Trace: %s\n\n", debug.FormattedCallStack(StackLevel, StackDepth))
 	// }

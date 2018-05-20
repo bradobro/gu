@@ -13,6 +13,7 @@ func TestReporter(t *testing.T) {
 		MaxDepth:  3,
 	}
 	rpt.Log("Log from the reporter says hello.")
+	rpt.Logf("Logf from the reporter says, %q.", "Hello")
 
 }
 
@@ -32,6 +33,13 @@ const (
 )
 
 func TestFailureMessageParsing(t *testing.T) {
+	// test blank case
+	rpt := &cyu.Reporter{}
+	s, l, d, m := rpt.Parse("")
+	testStringEqual(t, s, "")
+	testStringEqual(t, l, "")
+	testStringEqual(t, d, "")
+	testStringEqual(t, m, "")
 	// test normal order
 	testMessageParse(t, "", "", "", "", "")
 	testMessageParse(t, "", shortMsg, "", "", "")
@@ -50,10 +58,12 @@ func testStringEqual(t *testing.T, actual, expected string) {
 }
 
 func testMessageParse(t *testing.T, msg, short, long, details, meta string) {
+	rpt := &cyu.Reporter{}
 	if msg == "" {
-		msg = cyu.FormatFailure(short, long, details, meta)
+		msg = cyu.Failure(short, long, details, meta)
 	}
-	s, l, d, m := cyu.ParseFailure(msg)
+	t.Log("")
+	s, l, d, m := rpt.Parse(msg)
 	testStringEqual(t, s, short)
 	testStringEqual(t, l, long)
 	testStringEqual(t, d, details)
