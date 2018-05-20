@@ -2,6 +2,7 @@ package cyu
 
 import (
 	"fmt"
+	"runtime"
 	"strings"
 	// "github.com/kindrid/gotest/debug"
 )
@@ -64,16 +65,15 @@ func Failure(short, long, details, meta string) (result string) {
 }
 
 type Reporter struct {
-	T         T
 	Verbosity int
 	MaxDepth  int
 }
 
-func (r *Reporter) Logf(format string, args ...interface{}) {
-	r.T.Logf(format, args...)
+func (r *Reporter) Logf(t T, format string, args ...interface{}) {
+	t.Logf(format, args...)
 }
-func (r *Reporter) Log(message string) {
-	r.T.Logf("%s", message)
+func (r *Reporter) Log(t T, message string) {
+	t.Logf("%s", message)
 }
 
 // Parse divides a failure message into parts that may be muted depending on verbosity levels
@@ -92,17 +92,14 @@ func (r *Reporter) Parse(msg string) (short, long, details, meta string) {
 	return
 }
 
-func (r *Reporter) Report(skip int, fail string, params ...interface{}) {
+func (r *Reporter) Report(t T, skip int, fail string, params ...interface{}) {
 	var msg string
 	terseMsg, extraMsg, detailsMsg, metaMsg := r.Parse(fail)
-	// if StackDepth > 0 {
-	// msg += fmt.Sprintf("\nTest Failure Stack Trace: %s\n\n", debug.FormattedCallStack(StackLevel, StackDepth))
-	// }
 	msg += r.Sprintv(VerbosityShort, "%s", "FAILED")
-	if namer, ok := r.T.(Namer); ok { // this should allow use in Go < 1.8
+	if namer, ok := t.(Namer); ok { // this should allow use in Go < 1.8
 		msg += r.Sprintv(VerbosityShort, " %s:", namer.Name())
 	}
-	msg += r.Sprintv(VerbosityShort, "%s", terseMsg)
+	msg += r.Sprintv(VerbosityShort, " %s", terseMsg)
 	msg += r.Sprintv(VerbosityLong, "\nEXTRA INFO: %s\n", extraMsg)
 	if len(params) > 0 {
 		msg += r.Inspectv(VerbosityActuals, "\nACTUAL", params[0])
@@ -113,10 +110,11 @@ func (r *Reporter) Report(skip int, fail string, params ...interface{}) {
 	if detailsMsg != "" {
 		msg += r.Sprintv(VerbosityDebug, "\nDETAILS: %s\n", detailsMsg)
 	}
+	msg += r.Sprintv(VerbosityDebug, "\nSTACK: %s\n", Frames(skip, r.MaxDepth))
 	if metaMsg != "" {
 		msg += r.Sprintv(VerbosityInsane, "\nINTERNALS (FOR DEBUGGING ASSERTIONS): %s\n", metaMsg)
 	}
-	r.T.Error(msg)
+	t.Error(msg)
 }
 
 // Sprintv formats a string if Verbosity >= minLevel, otherwise returns ""
@@ -139,4 +137,27 @@ func (r *Reporter) Inspectv(minLevel int, label string, inspected ...interface{}
 		result += fmt.Sprintf("%#v\n", x)
 	}
 	return
+}
+
+type formatter func(path string, line int) string
+
+// formatFrames applies a formatter function to each level of call frame and returns the
+// resulting array of strings.
+func formatFrames(skip, max int, f formatter) (result []string) {
+	result = make([]string, 0, 8)
+	for i := skip; i < skip+max; i++ {
+		_, fullpath, line, ok := runtime.Caller(i)
+		if !ok {
+			continue
+		}
+		result = append(result, f(fullpath, line))
+	}
+	return
+}
+
+func Frames(skip, max int) string {
+	ff := formatFrames(skip, max, func(path string, ln int) string {
+		return fmt.Sprintf("%s:%d", path, ln)
+	})
+	return strings.Join(ff, "\n")
 }
