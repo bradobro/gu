@@ -3,28 +3,26 @@ package cyu
 import (
 	"fmt"
 	"strings"
-
-	"github.com/kindrid/gotest/debug"
-	"github.com/kindrid/gotest/should"
+	// "github.com/kindrid/gotest/debug"
 )
 
 // Verbosity Constants: these are conventions only. Assertions and test
 // functions can interpret these however they want.
 const (
-	// Silent shows no output except panics
-	Silent = iota - 1
-	// Short, by convention, shows the first line of the failure string.
-	Short
-	// Long adds the first paragraph of failure string (up to SectionSeparator)
-	Long
-	// Actuals adds the entire failure string and a (possibly shortened) representation of the actual value
-	Actuals
-	// Expecteds adds  (possibly shortened) representation(s) of expected values.
-	Expecteds
-	// Debug Adds granular information to successes as well as failures.
-	Debug
-	// Insane Adds information to test meta concerns, such as logic within assertions.
-	Insane
+	// VerbositySilent shows no output except panics
+	VerbositySilent = iota - 1
+	// VerbosityShort, by convention, shows the first line of the failure string.
+	VerbosityShort
+	// VerbosityLong adds the first paragraph of failure string (up to SectionSeparator)
+	VerbosityLong
+	// VerbosityActuals adds the entire failure string and a (possibly shortened) representation of the actual value
+	VerbosityActuals
+	// VerbosityExpecteds adds (possibly shortened) representation(s) of expected values.
+	VerbosityExpecteds
+	// VerbosityDebug adds granular information to successes as well as failures.
+	VerbosityDebug
+	// VerbosityInsane Adds information to test meta concerns, such as logic within assertions.
+	VerbosityInsane
 )
 
 // Message convention constants
@@ -48,12 +46,15 @@ func trim(s string) string {
 func splitShortLong(s string) (short, long string) {
 	sl := strings.SplitN(trim(s), ShortSeparator, 2)
 	if len(sl) > 1 {
-		return trim(sl[0])[:ShortLength], trim(sl[1])
+		short = trim(sl[0])
+		long = trim(sl[1])
+	} else {
+		short = trim(s)
 	}
-	if len(s) > ShortLength { // message too long, so return rest as long portion
-		return trim(s[:ShortLength]), trim(s[ShortLength:])
-	}
-	return trim(s), ""
+	// if len(short) > ShortLength {
+	// 	short = short[:ShortLength]
+	// }
+	return
 }
 
 // ParseFailure divides a failure message into parts that may be muted depending on verbosity levels
@@ -84,34 +85,37 @@ type Reporter struct {
 	MaxDepth  int
 }
 
-func (r *Reporter) Writef(format string, args ...interface{}) {
+func (r *Reporter) Logf(format string, args ...interface{}) {
 	r.T.Logf(format, args...)
+}
+func (r *Reporter) Log(message string) {
+	r.T.Logf("%s", message)
 }
 
 func (r *Reporter) Report(skip int, fail string, params ...interface{}) {
 	var msg string
-	terseMsg, extraMsg, detailsMsg, metaMsg := should.ParseFailure(fail)
+	terseMsg, extraMsg, detailsMsg, metaMsg := ParseFailure(fail)
 	// if StackDepth > 0 {
-	// 	msg += fmt.Sprintf("\nTest Failure Stack Trace: %s\n\n", debug.FormattedCallStack(StackLevel, StackDepth))
+	// msg += fmt.Sprintf("\nTest Failure Stack Trace: %s\n\n", debug.FormattedCallStack(StackLevel, StackDepth))
 	// }
 	if namer, ok := r.T.(Namer); ok {
-		msg += r.Sprintv(Short, "FAILED %s: %s", namer.Name(), terseMsg)
+		msg += r.Sprintv(VerbosityShort, "FAILED %s: %s", namer.Name(), terseMsg)
 	} else {
-		msg += r.Sprintv(Short, "FAILED: %s", terseMsg)
+		msg += r.Sprintv(VerbosityShort, "FAILED: %s", terseMsg)
 
 	}
-	msg += r.Sprintv(Long, "\nEXTRA INFO: %s\n", extraMsg+"\nCalls:"+debug.ShortStack(3, 10))
+	msg += r.Sprintv(VerbosityLong, "\nEXTRA INFO: %s\n", extraMsg)
 	if len(params) > 0 {
-		msg += r.Inspectv(Actuals, "\nACTUAL", params[0])
+		msg += r.Inspectv(VerbosityActuals, "\nACTUAL", params[0])
 	}
 	if len(params) > 1 {
-		msg += r.Inspectv(Expecteds, "\nEXPECTED", expected)
+		msg += r.Inspectv(VerbosityExpecteds, "\nEXPECTED", params[1:])
 	}
 	if detailsMsg != "" {
-		msg += r.Sprintv(Debug, "\nDETAILS: %s\n", detailsMsg)
+		msg += r.Sprintv(VerbosityDebug, "\nDETAILS: %s\n", detailsMsg)
 	}
 	if metaMsg != "" {
-		msg += r.Sprintv(Insane, "\nINTERNALS (FOR DEBUGGING ASSERTIONS): %s\n", metaMsg)
+		msg += r.Sprintv(VerbosityInsane, "\nINTERNALS (FOR DEBUGGING ASSERTIONS): %s\n", metaMsg)
 	}
 }
 

@@ -18,14 +18,14 @@ type Namer interface {
 // actual, configuration...
 type Assertion func(params ...interface{}) (fail string)
 
-type Tester struct {
+type Asserter struct {
 	t        T
 	FailFast bool
 	Reporter *Reporter
 }
 
-func NewTester(t T, failFast bool, maxDepth, verbosity int) (result *Tester) {
-	result = &Tester{
+func NewAsserter(t T, failFast bool, maxDepth, verbosity int) (result *Asserter) {
+	result = &Asserter{
 		t:        t,
 		FailFast: failFast,
 		Reporter: &Reporter{
@@ -39,17 +39,17 @@ func NewTester(t T, failFast bool, maxDepth, verbosity int) (result *Tester) {
 
 // AssertSkip wraps any standard Assertion for use with Go's std.testing library
 // skipping a given number of stack frames when reporting tracebacks.
-func (t *Tester) AssertSkip(skip int, assert Assertion, params ...interface{}) {
+func (t *Asserter) AssertSkip(skip int, assert Assertion, params ...interface{}) {
 
-	fail := assert(actual, params...)
+	fail := assert(params...)
 	t.Reporter.Report(skip, fail, params) // debug levels report even if there isn't a failure
 	if fail != "" && t.FailFast {
-		t.Reporter.Writef("Skipping remaining assertions for this test because of FailFast.\n")
+		t.Reporter.Log("Skipping remaining assertions for this test because of FailFast.\n")
 		t.t.FailNow()
 	}
 }
 
 // Assert reports errors, attempting to guess stack depth
-func (t *Tester) Assert(actual interface{}, f Assertion, expected ...interface{}) {
-	t.AssertSkip(4, actual, f, expected)
+func (t *Asserter) Assert(assert Assertion, params ...interface{}) {
+	t.AssertSkip(4, assert, params)
 }
