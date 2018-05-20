@@ -1,4 +1,4 @@
-/*package au implements simple Go-way testing.
+/*Package au implements simple Go-way testing.
 
   It leverages Go 1.7's testing features to provide parallel
   tests and suites.
