@@ -1,5 +1,5 @@
-# au: composable unit and bdd testing in Go.
+# Aurum: Simple, Extensible, Composable Testing in Go
 
-https://github.com/DATA-DOG/godog is official and much more developed, but it takes a very non-go-spirited approach to testing. It had to--`go test` was very limited.
+[ ![Codeship Status for bradobro/au](https://app.codeship.com/projects/9544f7b0-3e90-0136-3d5d-32fde32a4b52/status?branch=master)](https://app.codeship.com/projects/290760)
 
 Howeveer, as of Go 1.7, the`testing` library has become a lot richer. Staying closer to the standard libs makes it possible to leverage BDD code with tools for profiling, debugging, and benchmarking.
