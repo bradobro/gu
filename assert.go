@@ -6,6 +6,7 @@ type T interface {
 	Errorf(format string, args ...interface{})
 	Fail()
 	FailNow() // exit the current test immediately
+	Log(args ...interface{})
 	Logf(format string, args ...interface{})
 }
 
@@ -43,8 +44,11 @@ func NewAsserter(t T, failFast bool, maxDepth, verbosity int) (result *Asserter)
 func (t *Asserter) AssertSkip(skip int, assert Assertion, params ...interface{}) {
 
 	fail := assert(params...)
-	t.Reporter.Report(skip, fail, params) // debug levels report even if there isn't a failure
-	if fail != "" && t.FailFast {
+	if fail == "" {
+		return
+	}
+	t.Reporter.Report(skip, fail, params)
+	if t.FailFast {
 		t.Reporter.Log("Skipping remaining assertions for this test because of FailFast.\n")
 		t.t.FailNow()
 	}
@@ -52,5 +56,5 @@ func (t *Asserter) AssertSkip(skip int, assert Assertion, params ...interface{})
 
 // Assert reports errors, attempting to guess stack depth
 func (t *Asserter) Assert(assert Assertion, params ...interface{}) {
-	t.AssertSkip(4, assert, params)
+	t.AssertSkip(4, assert, params...)
 }

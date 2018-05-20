@@ -71,8 +71,6 @@ func testMessageParse(t *testing.T, msg, short, long, details, meta string) {
 }
 
 func TestReportLevels(t *testing.T) {
-	// IWBNI test output could be redirected to a buffer, but the only
-	//
 	rpt := &cyu.Reporter{T: t}
 	t.Log("Expect increasingly verbose logs:")
 	for i := cyu.VerbositySilent; i <= cyu.VerbosityInsane; i++ {

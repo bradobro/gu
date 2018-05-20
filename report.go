@@ -116,7 +116,7 @@ func (r *Reporter) Report(skip int, fail string, params ...interface{}) {
 	if metaMsg != "" {
 		msg += r.Sprintv(VerbosityInsane, "\nINTERNALS (FOR DEBUGGING ASSERTIONS): %s\n", metaMsg)
 	}
-	r.Log(msg)
+	r.T.Error(msg)
 }
 
 // Sprintv formats a string if Verbosity >= minLevel, otherwise returns ""
