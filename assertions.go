@@ -31,7 +31,7 @@ func Needs(needed int, params []interface{}) string {
 }
 
 func NeedsAtLeast(minimum int, params []interface{}) string {
-	if len(params) < 1 {
+	if len(params) < minimum {
 		return fmt.Sprintf(needsMoreValues, minimum, len(params))
 	}
 	return success
@@ -54,7 +54,7 @@ func Skip(params ...interface{}) string {
 	return ""
 }
 
-func AllNil(params ...interface{}) (fail string) {
+func Nil(params ...interface{}) (fail string) {
 	for _, x := range params {
 		if x != nil {
 			return "should be nil"
@@ -63,7 +63,7 @@ func AllNil(params ...interface{}) (fail string) {
 	return
 }
 
-func NoneNil(params ...interface{}) (fail string) {
+func NotNil(params ...interface{}) (fail string) {
 	for _, x := range params {
 		if x == nil {
 			return "should not be nil"
@@ -72,14 +72,14 @@ func NoneNil(params ...interface{}) (fail string) {
 	return
 }
 
-var Passes = AllNil
+var Passes = Nil
 
-var Fails = NoneNil
+var Fails = NotNil
 
 func True(params ...interface{}) (fail string) {
 	for _, x := range params {
 		if b, ok := x.(bool); !ok {
-			return fmt.Sprintf("expecting a bool, got %#v", b)
+			return fmt.Sprintf("expecting a bool, got %#v.(%T)", x, x)
 		} else if !b {
 			return "expecting true, got false"
 		}
@@ -90,7 +90,7 @@ func True(params ...interface{}) (fail string) {
 func False(params ...interface{}) (fail string) {
 	for _, x := range params {
 		if b, ok := x.(bool); !ok {
-			return fmt.Sprintf("expecting a bool, got %#v", b)
+			return fmt.Sprintf("expecting a bool, got %#v.(%T)", x, x)
 		} else if b {
 			return "expecting false, got true"
 		}
