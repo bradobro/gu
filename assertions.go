@@ -46,6 +46,14 @@ func NeedsAtMost(max int, params []interface{}) string {
 
 /* Basic Assertions */
 
+func Fail(params ...interface{}) string {
+	return "forced failure"
+}
+
+func Skip(params ...interface{}) string {
+	return ""
+}
+
 func AllNil(params ...interface{}) (fail string) {
 	for _, x := range params {
 		if x != nil {
