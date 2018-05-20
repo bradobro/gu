@@ -2,6 +2,8 @@
 
 [ ![Codeship Status for bradobro/au](https://app.codeship.com/projects/9544f7b0-3e90-0136-3d5d-32fde32a4b52/status?branch=master)](https://app.codeship.com/projects/290760) [![Maintainability](https://api.codeclimate.com/v1/badges/ff20026525c9ef26b98f/maintainability)](https://codeclimate.com/github/bradobro/au/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/ff20026525c9ef26b98f/test_coverage)](https://codeclimate.com/github/bradobro/au/test_coverage)
 
+[GoDoc](https://godoc.org/github.com/bradobro/au)
+
 **Au** == *aurum* == gold.
 
 **Au** strives to be:
@@ -59,6 +61,12 @@ func TestExample(t *testing.T) {
 	au.Assert(t, au.Unequal, a, b, c, d)
 }
 ```
+
+# Deeper Start
+
+See the documentation locally at http://localhost:6060:
+
+`godoc -http=:6060`
 
 # Assertion API
 
