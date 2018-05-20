@@ -31,7 +31,7 @@ func Needs(needed int, params []interface{}) string {
 	return success
 }
 
-// Needs ensures that at least minimum number of parameters is used
+// NeedsAtLeast ensures that at least minimum number of parameters is used
 func NeedsAtLeast(minimum int, params []interface{}) string {
 	if len(params) < minimum {
 		return fmt.Sprintf(needsMoreValues, minimum, len(params))
@@ -39,7 +39,7 @@ func NeedsAtLeast(minimum int, params []interface{}) string {
 	return success
 }
 
-// Needs checks that no more than a maximum number of parameters is used
+// NeedsAtMost checks that no more than a maximum number of parameters is used
 func NeedsAtMost(max int, params []interface{}) string {
 	if len(params) > max {
 		return fmt.Sprintf(needFewerValues, max, len(params))

@@ -64,14 +64,18 @@ func Failure(short, long, details, meta string) (result string) {
 	return
 }
 
+// Reporter outputs failure information
 type Reporter struct {
 	Verbosity int
 	MaxDepth  int
 }
 
+// Logf parallels testing.T.Logf()
 func (r *Reporter) Logf(t T, format string, args ...interface{}) {
 	t.Logf(format, args...)
 }
+
+// Log parallels testing.T.Log()
 func (r *Reporter) Log(t T, message string) {
 	t.Logf("%s", message)
 }
@@ -92,6 +96,9 @@ func (r *Reporter) Parse(msg string) (short, long, details, meta string) {
 	return
 }
 
+/*Report takes into account it's verbosity settings and outputs failure
+information accordingly, skipping a supplied number of stack frames.
+*/
 func (r *Reporter) Report(t T, skip int, fail string, params ...interface{}) {
 	var msg string
 	terseMsg, extraMsg, detailsMsg, metaMsg := r.Parse(fail)
@@ -155,6 +162,8 @@ func formatFrames(skip, max int, f formatter) (result []string) {
 	return
 }
 
+// Frames returns a concise traceback of up to max stack frames,
+// beginning skip frames above the current one.
 func Frames(skip, max int) string {
 	ff := formatFrames(skip, max, func(path string, ln int) string {
 		return fmt.Sprintf("%s:%d", path, ln)
