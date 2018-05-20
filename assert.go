@@ -10,6 +10,7 @@ type T interface {
 	Logf(format string, args ...interface{})
 }
 
+// Namer exposes testing.T.Name(), new in Go 1.8
 type Namer interface {
 	Name() string // need Go 1.8 for this.
 }
@@ -20,11 +21,13 @@ type Namer interface {
 // actual, configuration...
 type Assertion func(params ...interface{}) (fail string)
 
+// Asserter tests assertions and reports on failures.
 type Asserter struct {
 	FailFast bool
 	Reporter *Reporter
 }
 
+// NewAsserter creates an assertion reporter with reporting settings
 func NewAsserter(failFast bool, maxDepth, verbosity int) (result *Asserter) {
 	result = &Asserter{
 		FailFast: failFast,
