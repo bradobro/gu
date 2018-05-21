@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ## Added
 - DefaultAsserter exposing a package-level Assert() and AssertSkip()
+## Changed
+- Changed project name from `au` to `gu`.
 
 ## [1.0.0] - 2018-05-20
 ### Added

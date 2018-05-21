@@ -1,7 +1,8 @@
 # Gu: Go Foundational Testing
 
-[GoDoc](https://godoc.org/github.com/bradobro/gu) • [ ![Codeship Status for bradobro/gu](https://app.codeship.com/projects/9544f7b0-3e90-0136-3d5d-32fde32a4b52/status?branch=master)](https://app.codeship.com/projects/290760) • [![Maintainability](https://api.codeclimate.com/v1/badges/74651756272c02bb6370/maintainability)](https://codeclimate.com/github/bradobro/gu/maintainability) • [![Test Coverage](https://api.codeclimate.com/v1/badges/74651756272c02bb6370/test_coverage)](https://codeclimate.com/github/bradobro/gu/test_coverage)
+[ ![Codeship Status for bradobro/gu](https://app.codeship.com/projects/9544f7b0-3e90-0136-3d5d-32fde32a4b52/status?branch=master)](https://app.codeship.com/projects/290760) [![Maintainability](https://api.codeclimate.com/v1/badges/74651756272c02bb6370/maintainability)](https://codeclimate.com/github/bradobro/gu/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/74651756272c02bb6370/test_coverage)](https://codeclimate.com/github/bradobro/gu/test_coverage)
 
+[GoDoc](https://godoc.org/github.com/bradobro/gu)
 
 **Gu** strives to be:
 
