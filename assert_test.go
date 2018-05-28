@@ -163,11 +163,15 @@ func TestApplyArgs(t *testing.T) {
 		return fmt.Errorf("len(args) != %d + %d", a, b)
 	}
 	// no error
+	assertNil(t, gu.Apply(typed, 0, 2))
+	// no error
 	assertNil(t, gu.Apply(typed, 0, 3, "a"))
 	// failure
 	assertEquals(t, gu.Apply(typed, 0, 4, "a").Error(), "len(args) != 0 + 4")
 	// error in variadic types
 	assertEquals(t, gu.Apply(typed, 0, 4, "a", 64.2).Error(), "arg 3 (64.2) not assignable to variadic param 3 (string)")
+	// insufficient values for variadic
+	assertEquals(t, gu.Apply(typed, 0).Error(), "test function expecting at least 2 args, got 1")
 
 }
 

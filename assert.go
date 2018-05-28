@@ -68,10 +68,10 @@ func checkedInputs(t reflect.Type, args []interface{}) (vals []reflect.Value, er
 	nParams := t.NumIn()
 	nArgs := len(args)
 	if t.IsVariadic() {
+		nParams--
 		if nArgs < nParams {
 			return nil, fmt.Errorf("test function expecting at least %d args, got %d", nParams, nArgs)
 		}
-		nParams--
 	} else if nArgs != nParams {
 		return nil, fmt.Errorf("test function expecting %d args, got %d", nParams, nArgs)
 	}
