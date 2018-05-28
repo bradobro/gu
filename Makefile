@@ -1,2 +1,7 @@
 test:
-	go test . ./cmd
+	go test .
+
+cover:
+	go test -coverprofile=c.out .
+
+
