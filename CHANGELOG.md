@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.0.0] - 2018-05-28
+### Changed
+- BREAKING: Assertion functions now must return errors, not strings.
+- Assertion functions can have any number of typed params.
+- Assertion functions may have  or omit typed or untyped variadic params.
+
 ## [1.0.3] - 2018-05-20
 ### Added
 - DefaultAsserter exposing a package-level Assert() and AssertSkip()
