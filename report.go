@@ -1,6 +1,7 @@
 package gu
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"strings"
@@ -12,7 +13,7 @@ import (
 const (
 	// VerbositySilent shows no output except panics
 	VerbositySilent = iota - 1
-	// VerbosityShort, by convention, shows the first line of the failure string.
+	// VerbosityShort, the default (= 0), by convention, shows the first line of the failure string.
 	VerbosityShort
 	// VerbosityLong adds the first paragraph of failure string (up to SectionSeparator)
 	VerbosityLong
@@ -59,9 +60,9 @@ func splitShortLong(s string) (short, long string) {
 }
 
 // Failure creates a failure message from its components
-func Failure(short, long, details, meta string) (result string) {
-	result = short + ShortSeparator + long + SectionSeparator + details + SectionSeparator + meta
-	return
+func Failure(short, long, details, meta string) (result error) {
+	return errors.New(short + ShortSeparator +
+		long + SectionSeparator + details + SectionSeparator + meta)
 }
 
 // Reporter outputs failure information
@@ -81,11 +82,11 @@ func (r *Reporter) Log(t T, message string) {
 }
 
 // Parse divides a failure message into parts that may be muted depending on verbosity levels
-func (r *Reporter) Parse(msg string) (short, long, details, meta string) {
-	if msg == "" {
+func (r *Reporter) Parse(err error) (short, long, details, meta string) {
+	if err == nil {
 		return
 	}
-	secs := strings.Split(msg, SectionSeparator)
+	secs := strings.Split(err.Error(), SectionSeparator)
 	short, long = splitShortLong(secs[0])
 	if len(secs) > 1 {
 		details = trim(secs[1])
@@ -99,9 +100,9 @@ func (r *Reporter) Parse(msg string) (short, long, details, meta string) {
 /*Report takes into account it's verbosity settings and outputs failure
 information accordingly, skipping a supplied number of stack frames.
 */
-func (r *Reporter) Report(t T, skip int, fail string, params ...interface{}) {
+func (r *Reporter) Report(t T, skip int, err error, params ...interface{}) {
 	var msg string
-	terseMsg, extraMsg, detailsMsg, metaMsg := r.Parse(fail)
+	terseMsg, extraMsg, detailsMsg, metaMsg := r.Parse(err)
 	msg += r.Sprintv(VerbosityShort, "%s", "FAILED")
 	if namer, ok := t.(Namer); ok { // this should allow use in Go < 1.8
 		msg += r.Sprintv(VerbosityShort, " %s:", namer.Name())

@@ -19,7 +19,7 @@ type Namer interface {
 // actual...
 // actual, expected...
 // actual, configuration...
-type Assertion func(params ...interface{}) (fail string)
+type Assertion func(params ...interface{}) (err error)
 
 // Asserter tests assertions and reports on failures.
 type Asserter struct {
@@ -43,11 +43,11 @@ func NewAsserter(failFast bool, maxDepth, verbosity int) (result *Asserter) {
 // skipping a given number of stack frames when reporting tracebacks.
 func (assert *Asserter) AssertSkip(t T, skip int, assertf Assertion, params ...interface{}) {
 
-	fail := assertf(params...)
-	if fail == "" {
+	err := assertf(params...)
+	if err == nil {
 		return
 	}
-	assert.Reporter.Report(t, skip, fail, params)
+	assert.Reporter.Report(t, skip, err, params)
 	if assert.FailFast {
 		assert.Reporter.Log(t, "Skipping remaining assertions for this test because of FailFast.\n")
 		t.FailNow()

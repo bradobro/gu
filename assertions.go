@@ -1,6 +1,7 @@
 package gu
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 )
@@ -8,72 +9,71 @@ import (
 /* Assertion Helpers */
 
 // isEqual returns "" if a equals b, otherwise it may explain the inequality
-func isEqual(a, b interface{}) string {
+func isEqual(a, b interface{}) error {
 	// for now we just use reflect.DeepEqual, but we may want to enhance this.
 	if reflect.DeepEqual(a, b) {
-		return ""
+		return nil
 	}
-	return fmt.Sprintf("do not equal")
+	return errors.New("do not equal")
 }
 
 const (
-	success         = ""
 	needExactValues = "This assertion requires exactly %d params (you provided %d)."
 	needsMoreValues = "This assertion requires at least %d params (you provided %d)."
 	needFewerValues = "This assertion allows %d or fewer comparison values (you provided %d)."
 )
 
 // Needs checks that an exact number of parameters is used
-func Needs(needed int, params []interface{}) string {
+func Needs(needed int, params []interface{}) error {
 	if len(params) != needed {
-		return fmt.Sprintf(needExactValues, needed, len(params))
+		return fmt.Errorf(needExactValues, needed, len(params))
 	}
-	return success
+	return nil
 }
 
 // NeedsAtLeast ensures that at least minimum number of parameters is used
-func NeedsAtLeast(minimum int, params []interface{}) string {
+func NeedsAtLeast(minimum int, params []interface{}) error {
 	if len(params) < minimum {
-		return fmt.Sprintf(needsMoreValues, minimum, len(params))
+		return fmt.Errorf(needsMoreValues, minimum, len(params))
 	}
-	return success
+	return nil
 }
 
 // NeedsAtMost checks that no more than a maximum number of parameters is used
-func NeedsAtMost(max int, params []interface{}) string {
+func NeedsAtMost(max int, params []interface{}) error {
 	if len(params) > max {
-		return fmt.Sprintf(needFewerValues, max, len(params))
+		return fmt.Errorf(needFewerValues, max, len(params))
 	}
-	return success
+	return nil
 }
 
 /* Basic Assertions */
 
 // Fail always fails
-func Fail(params ...interface{}) string {
-	return "forced failure"
+func Fail(params ...interface{}) error {
+	return errors.New("forced failure")
 }
 
 // Skip skips a test
-func Skip(params ...interface{}) string {
-	return ""
+func Skip(params ...interface{}) error {
+	return nil
 }
 
 // Nil fails if any of its params are not nil
-func Nil(params ...interface{}) (fail string) {
+func Nil(params ...interface{}) (err error) {
 	for _, x := range params {
 		if x != nil {
-			return "should be nil"
+			return errors.New("should be nil")
 		}
 	}
 	return
 }
 
 // NotNil fails if any of its params are nil
-func NotNil(params ...interface{}) (fail string) {
+func NotNil(params ...interface{}) (err error) {
 	for _, x := range params {
 		if x == nil {
-			return "should not be nil"
+			return errors.New("should not be nil")
 		}
 	}
 	return
@@ -86,52 +86,52 @@ var Passes = Nil
 var Fails = NotNil
 
 // True fails if any of its params are false
-func True(params ...interface{}) (fail string) {
+func True(params ...interface{}) (err error) {
 	for _, x := range params {
 		if b, ok := x.(bool); !ok {
-			return fmt.Sprintf("expecting a bool, got %#v.(%T)", x, x)
+			return fmt.Errorf("expecting a bool, got %#v.(%T)", x, x)
 		} else if !b {
-			return "expecting true, got false"
+			return errors.New("expecting true, got false")
 		}
 	}
 	return
 }
 
 // False fails if any of its params are true
-func False(params ...interface{}) (fail string) {
+func False(params ...interface{}) (err error) {
 	for _, x := range params {
 		if b, ok := x.(bool); !ok {
-			return fmt.Sprintf("expecting a bool, got %#v.(%T)", x, x)
+			return fmt.Errorf("expecting a bool, got %#v.(%T)", x, x)
 		} else if b {
-			return "expecting false, got true"
+			return errors.New("expecting false, got true")
 		}
 	}
 	return
 }
 
 // Equal fails if the first param does not equal all the later params.
-func Equal(params ...interface{}) (fail string) {
-	if fail = NeedsAtLeast(2, params); fail != success {
+func Equal(params ...interface{}) (err error) {
+	if err = NeedsAtLeast(2, params); err != nil {
 		return
 	}
 	first := params[0]
 	for _, x := range params[1:] {
-		if isEqual(first, x) != "" {
-			return fmt.Sprintf("expected %#v == %#v", first, x)
+		if isEqual(first, x) != nil {
+			return fmt.Errorf("expected %#v == %#v", first, x)
 		}
 	}
 	return
 }
 
 // Unequal fails if the first param equals any of the later params
-func Unequal(params ...interface{}) (fail string) {
-	if fail = NeedsAtLeast(2, params); fail != success {
+func Unequal(params ...interface{}) (err error) {
+	if err = NeedsAtLeast(2, params); err != nil {
 		return
 	}
 	first := params[0]
 	for _, x := range params[1:] {
-		if isEqual(first, x) == "" {
-			return fmt.Sprintf("expected %#v != %#v", first, x)
+		if isEqual(first, x) == nil {
+			return fmt.Errorf("expected %#v != %#v", first, x)
 		}
 	}
 	return
