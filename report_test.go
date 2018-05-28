@@ -1,6 +1,7 @@
 package gu_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/bradobro/gu"
@@ -16,45 +17,48 @@ func TestReporter(t *testing.T) {
 }
 
 const (
-	shortMsg      = "Brief message"
-	longMsg       = "Extra message with\nseveral lines."
-	detailsMsg    = "Here are some \ndetails"
-	metaMsg       = "Here are a bunch of technical details about test workings \nfor when you doubt the assertion or the runner."
-	failShort     = shortMsg
-	failLong      = gu.ShortSeparator + longMsg
-	failDetails   = gu.SectionSeparator + detailsMsg
-	failMeta      = gu.SectionSeparator + metaMsg
-	failShortLong = failShort + failLong
-	failAll       = failShort + failLong + failDetails + failMeta
+	shortMsg   = "Brief message"
+	longMsg    = "Extra message with\nseveral lines."
+	detailsMsg = "Here are some \ndetails"
+	metaMsg    = "Here are a bunch of technical details about test workings \nfor when you doubt the assertion or the runner."
+)
 
-	failShortMeta = failShort + gu.ShortSeparator + gu.SectionSeparator + failMeta
+var (
+	failShort     error = errors.New(shortMsg)
+	failLong      error = errors.New(gu.ShortSeparator + longMsg)
+	failDetails   error = errors.New(gu.SectionSeparator + detailsMsg)
+	failMeta      error = errors.New(gu.SectionSeparator + metaMsg)
+	failShortLong error = errors.New(shortMsg + gu.ShortSeparator + longMsg)
+	failAll       error = errors.New(shortMsg + gu.ShortSeparator + longMsg +
+		gu.SectionSeparator + detailsMsg + gu.SectionSeparator + metaMsg)
+	failShortMeta error = errors.New(shortMsg + gu.ShortSeparator + gu.SectionSeparator + metaMsg)
 )
 
 func TestFailureMessageParsing(t *testing.T) {
 	// test blank case
 	rpt := &gu.Reporter{}
-	s, l, d, m := rpt.Parse("")
+	s, l, d, m := rpt.Parse(nil)
 	assertEquals(t, s, "")
 	assertEquals(t, l, "")
 	assertEquals(t, d, "")
 	assertEquals(t, m, "")
 	// test normal order
-	testMessageParse(t, "", "", "", "", "")
-	testMessageParse(t, "", shortMsg, "", "", "")
-	testMessageParse(t, "", shortMsg, longMsg, "", "")
-	testMessageParse(t, "", shortMsg, longMsg, detailsMsg, metaMsg)
+	testMessageParse(t, nil, "", "", "", "")
+	testMessageParse(t, nil, shortMsg, "", "", "")
+	testMessageParse(t, nil, shortMsg, longMsg, "", "")
+	testMessageParse(t, nil, shortMsg, longMsg, detailsMsg, metaMsg)
 
-	testMessageParse(t, "something", "something", "", "", "")
-	testMessageParse(t, "something\n"+longMsg, "something", longMsg, "", "")
-	testMessageParse(t, " \n \n \n "+longMsg, "Extra message with", "several lines.", "", "")
+	testMessageParse(t, errors.New("something"), "something", "", "", "")
+	testMessageParse(t, errors.New("something\n"+longMsg), "something", longMsg, "", "")
+	testMessageParse(t, errors.New(" \n \n \n "+longMsg), "Extra message with", "several lines.", "", "")
 }
 
-func testMessageParse(t *testing.T, msg, short, long, details, meta string) {
+func testMessageParse(t *testing.T, err error, short, long, details, meta string) {
 	rpt := &gu.Reporter{}
-	if msg == "" {
-		msg = gu.Failure(short, long, details, meta)
+	if err == nil {
+		err = gu.Failure(short, long, details, meta)
 	}
-	s, l, d, m := rpt.Parse(msg)
+	s, l, d, m := rpt.Parse(err)
 	assertEquals(t, s, short)
 	assertEquals(t, l, long)
 	assertEquals(t, d, details)
@@ -99,4 +103,11 @@ func TestReportLevels(t *testing.T) {
 	rpt.Verbosity = gu.VerbosityInsane
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
 	testStringContains(t, buf.String(), "Here are a bunch of technical details")
+}
+
+func TestStackReporting(t *testing.T) {
+
+	// Frame count too high should not cause a panic
+	f := gu.Frames(0, 1000)
+	t.Log(f)
 }

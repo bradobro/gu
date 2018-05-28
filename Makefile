@@ -1,2 +1,6 @@
 test:
-	go test . ./cmd
+	go test .
+
+cover:
+	go test -coverprofile=c.out .
+	go tool cover -html=c.out

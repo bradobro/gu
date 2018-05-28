@@ -16,6 +16,12 @@ func assertTrue(t gu.T, actual bool, msg string) {
 	}
 }
 
+func assertNil(t gu.T, actual interface{}) {
+	if actual != nil {
+		t.Errorf("Expected nil: %#v", actual)
+	}
+}
+
 func assertEquals(t gu.T, actual, expected string) {
 	if actual != expected {
 		t.Errorf("Actual %#v\nExpected %#v", actual, expected)
