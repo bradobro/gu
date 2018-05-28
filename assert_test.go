@@ -108,7 +108,7 @@ func (t *CustomT) Logf(format string, args ...interface{}) {
 
 func TestApply(t *testing.T) {
 	// invalid assertion functions
-	assertEquals(t, gu.Apply(1, 2, 3, 4).Error(), "expecting a function returning only an error, got 1 (type int)")
+	assertEquals(t, gu.Apply(1, 2, 3, 4).Error(), "this test library expects an assertion function returning only an error, got 1 (type int)")
 	assertStringContains(t, gu.Apply(t).Error(), "*testing.T")
 	assertStringContains(t, gu.Apply(func() {}).Error(), "func()")
 	assertStringContains(t, gu.Apply(func() int { return 0 }).Error(), "func()")

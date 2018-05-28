@@ -35,34 +35,55 @@ var errorType = reflect.TypeOf((*error)(nil)).Elem()
 
 // Apply attempts to apply args to an assertion function
 func Apply(f Assertion, args ...interface{}) (err error) {
-	n := len(args)
+	var inputs, outputs []reflect.Value
 	t := reflect.TypeOf(f)
-	err = fmt.Errorf("expecting a function returning only an error, got %#v (type %T)", f, f)
+	badFunc := fmt.Errorf("this test library expects an assertion function returning only an error, got %#v (type %T)", f, f)
 
 	// make sure f is a function
 	if t.Kind() != reflect.Func {
-		return
+		return badFunc
 	}
-
-	// convert the args to values
-	inputs := make([]reflect.Value, n)
-	for i := 0; i < n; i++ {
-		inputs[i] = reflect.ValueOf(args[i])
-	}
-
-	// verify the args
 
 	// run the function
-	outputs := reflect.ValueOf(f).Call(inputs)
-	if len(outputs) != 1 {
-		return
+	if inputs, err = checkedInputs(t, args); err != nil {
+		return // problem with args
 	}
+	outputs = reflect.ValueOf(f).Call(inputs)
+	if len(outputs) != 1 {
+		return badFunc
+	}
+	// check and convert the output to an error
 	output := outputs[0].Interface()
 	if output == nil {
 		return nil
 	}
 	if result, ok := output.(error); ok {
 		return result
+	}
+	return badFunc
+}
+
+func checkedInputs(t reflect.Type, args []interface{}) (vals []reflect.Value, err error) {
+	nParams := t.NumIn()
+	nArgs := len(args)
+	if t.IsVariadic() {
+		if nArgs < nParams {
+			return nil, fmt.Errorf("test function expecting at least %d args, got %d", nParams, nArgs)
+		}
+		nParams--
+	} else if nArgs != nParams {
+		return nil, fmt.Errorf("test function expecting %d args, got %d", nParams, nArgs)
+	}
+	vals = make([]reflect.Value, nArgs)
+	for i := 0; i < nArgs; i++ {
+		vals[i] = reflect.ValueOf(args[i])
+		if i >= nParams { // handle variadics
+			if !vals[i].Type().AssignableTo(t.In(nParams).Elem()) {
+				return nil, fmt.Errorf("arg %d not assignable to variadic param %d (%s)", i, i, t.In(nParams))
+			}
+		} else if !vals[i].Type().AssignableTo(t.In(i)) {
+			return nil, fmt.Errorf("arg %d not assignable to param %d (%s)", i, i, t.In(i))
+		}
 	}
 	return
 }
