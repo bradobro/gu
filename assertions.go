@@ -23,24 +23,24 @@ const (
 	needFewerValues = "This assertion allows %d or fewer comparison values (you provided %d)."
 )
 
-// Needs checks that an exact number of parameters is used
-func Needs(needed int, params []interface{}) error {
+// Has checks that an exact number of parameters is used
+func Has(needed int, params []interface{}) error {
 	if len(params) != needed {
 		return fmt.Errorf(needExactValues, needed, len(params))
 	}
 	return nil
 }
 
-// NeedsAtLeast ensures that at least minimum number of parameters is used
-func NeedsAtLeast(minimum int, params []interface{}) error {
+// HasAtLeast ensures that at least minimum number of parameters is used
+func HasAtLeast(minimum int, params []interface{}) error {
 	if len(params) < minimum {
 		return fmt.Errorf(needsMoreValues, minimum, len(params))
 	}
 	return nil
 }
 
-// NeedsAtMost checks that no more than a maximum number of parameters is used
-func NeedsAtMost(max int, params []interface{}) error {
+// HasAtMost checks that no more than a maximum number of parameters is used
+func HasAtMost(max int, params []interface{}) error {
 	if len(params) > max {
 		return fmt.Errorf(needFewerValues, max, len(params))
 	}
@@ -111,7 +111,7 @@ func False(params ...interface{}) (err error) {
 
 // Equal fails if the first param does not equal all the later params.
 func Equal(params ...interface{}) (err error) {
-	if err = NeedsAtLeast(2, params); err != nil {
+	if err = HasAtLeast(2, params); err != nil {
 		return
 	}
 	first := params[0]
@@ -125,7 +125,7 @@ func Equal(params ...interface{}) (err error) {
 
 // Unequal fails if the first param equals any of the later params
 func Unequal(params ...interface{}) (err error) {
-	if err = NeedsAtLeast(2, params); err != nil {
+	if err = HasAtLeast(2, params); err != nil {
 		return
 	}
 	first := params[0]
