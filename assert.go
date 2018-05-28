@@ -1,5 +1,10 @@
 package gu
 
+import (
+	"fmt"
+	"reflect"
+)
+
 // T describes the interface provided by Go's *testing.T.
 type T interface {
 	Error(args ...interface{})
@@ -15,11 +20,28 @@ type Namer interface {
 	Name() string // need Go 1.8 for this.
 }
 
-// Assertion is a generic test function. By convention its params are either
-// actual...
-// actual, expected...
-// actual, configuration...
-type Assertion func(params ...interface{}) (err error)
+/* Assertion is convention for test functions.
+It is declared as an interface because the function can be of any arity and
+argument types so long as it returns an error.
+
+A nil error means the assertion passes.
+A non-nil error means the test failed, and the reporter will attempt to parse
+the error's message (err.Error()) to control verbosity. See the Reporter struct
+for details.
+*/
+type Assertion interface{}
+
+// Apply attempts to apply args to an assertion function
+func Apply(f Assertion, args ...interface{}) (err error) {
+	t := reflect.TypeOf(f)
+	if t.Kind() != reflect.Func || // it's a function
+		(t.NumOut() != 1) { //|| // with a single return
+		// (t.Out(0).Implements(reflect.TypeOf(err))) { // returning an error
+		badFunc := "expecting a function returning an error, got %#v (type %T)"
+		return fmt.Errorf(badFunc, f, f)
+	}
+	return
+}
 
 // Asserter tests assertions and reports on failures.
 type Asserter struct {
@@ -41,9 +63,9 @@ func NewAsserter(failFast bool, maxDepth, verbosity int) (result *Asserter) {
 
 // AssertSkip wraps any standard Assertion for use with Go's std.testing library
 // skipping a given number of stack frames when reporting tracebacks.
-func (assert *Asserter) AssertSkip(t T, skip int, assertf Assertion, params ...interface{}) {
+func (assert *Asserter) AssertSkip(t T, skip int, assertion Assertion, params ...interface{}) {
 
-	err := assertf(params...)
+	err := Apply(assertion, params...)
 	if err == nil {
 		return
 	}
@@ -55,6 +77,6 @@ func (assert *Asserter) AssertSkip(t T, skip int, assertf Assertion, params ...i
 }
 
 // Assert reports errors, attempting to guess stack depth
-func (assert *Asserter) Assert(t T, assertf Assertion, params ...interface{}) {
-	assert.AssertSkip(t, 5, assertf, params...)
+func (assert *Asserter) Assert(t T, assertion Assertion, params ...interface{}) {
+	assert.AssertSkip(t, 5, assertion, params...)
 }

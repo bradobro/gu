@@ -76,33 +76,33 @@ func TestReportLevels(t *testing.T) {
 	ct, buf = newTestT(t)
 	rpt.Verbosity = gu.VerbosityShort
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
-	testStringContains(t, buf.String(), "Brief message")
+	assertStringContains(t, buf.String(), "Brief message")
 
 	ct, buf = newTestT(t)
 	rpt.Verbosity = gu.VerbosityLong
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
-	testStringContains(t, buf.String(), "Brief message\nEXTRA INFO: Extra message with\nseveral lines.\n")
+	assertStringContains(t, buf.String(), "Brief message\nEXTRA INFO: Extra message with\nseveral lines.\n")
 
 	ct, buf = newTestT(t)
 	rpt.Verbosity = gu.VerbosityActuals
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
-	testStringContains(t, buf.String(), "gu.Reporter{Verbosity")
+	assertStringContains(t, buf.String(), "gu.Reporter{Verbosity")
 
 	ct, buf = newTestT(t)
 	rpt.Verbosity = gu.VerbosityExpecteds
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
-	testStringContains(t, buf.String(), `"extra 1", "extra 2"`)
+	assertStringContains(t, buf.String(), `"extra 1", "extra 2"`)
 
 	ct, buf = newTestT(t)
 	rpt.Verbosity = gu.VerbosityDebug
 	rpt.Report(ct, 1, failAll, rpt, "extra 1", "extra 2")
-	testStringContains(t, buf.String(), "Here are some \ndetails\n")
-	testStringContains(t, buf.String(), "gu/report_test.go")
+	assertStringContains(t, buf.String(), "Here are some \ndetails\n")
+	assertStringContains(t, buf.String(), "gu/report_test.go")
 
 	ct, buf = newTestT(t)
 	rpt.Verbosity = gu.VerbosityInsane
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
-	testStringContains(t, buf.String(), "Here are a bunch of technical details")
+	assertStringContains(t, buf.String(), "Here are a bunch of technical details")
 }
 
 func TestStackReporting(t *testing.T) {

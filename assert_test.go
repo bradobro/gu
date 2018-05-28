@@ -28,7 +28,7 @@ func assertEquals(t gu.T, actual, expected string) {
 	}
 }
 
-func testStringContains(t gu.T, actual, contains string) {
+func assertStringContains(t gu.T, actual, contains string) {
 	if !strings.Contains(actual, contains) {
 		t.Errorf("%#v\ndoes not contain %#v", actual, contains)
 	}
@@ -105,6 +105,14 @@ func (t *CustomT) Logf(format string, args ...interface{}) {
 	}
 }
 
+func TestApply(t *testing.T) {
+	assertEquals(t, gu.Apply(1, 2, 3, 4).Error(), "expecting a function returning an error, got 1 (type int)")
+	assertStringContains(t, gu.Apply(t).Error(), "*testing.T")
+	assertStringContains(t, gu.Apply(func() {}).Error(), "func()")
+	// assertStringContains(t, gu.Apply(func() error { return nil }).Error(), "*testing.T")
+
+}
+
 func TestAssert(t *testing.T) {
 	ct, _ := newTestT(t)
 
@@ -112,6 +120,9 @@ func TestAssert(t *testing.T) {
 	x := 5
 	y := x + 1
 
+	tt.Assert(ct, func(a, b, c int) error {
+		return nil
+	}, 1, 2, 3)
 	tt.Assert(ct, gu.Equal, x, x)
 	tt.Assert(ct, gu.Unequal, x, y)
 	assertTrue(t, !(ct.Failed || ct.FailedFast), "these tests shouldn't have failed")
