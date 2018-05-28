@@ -8,15 +8,15 @@ import (
 
 func TestAssertionHelpers(t *testing.T) {
 	params := []interface{}{"a", 1, struct{}{}}
-	assertEquals(t, gu.Needs(2, params).Error(), "This assertion requires exactly 2 params (you provided 3).")
-	assertNil(t, gu.Needs(3, params))
-	assertEquals(t, gu.Needs(4, params).Error(), "This assertion requires exactly 4 params (you provided 3).")
-	assertNil(t, gu.NeedsAtLeast(2, params))
-	assertNil(t, gu.NeedsAtLeast(3, params))
-	assertEquals(t, gu.NeedsAtLeast(4, params).Error(), "This assertion requires at least 4 params (you provided 3).")
-	assertEquals(t, gu.NeedsAtMost(2, params).Error(), "This assertion allows 2 or fewer comparison values (you provided 3).")
-	assertNil(t, gu.NeedsAtMost(3, params))
-	assertNil(t, gu.NeedsAtMost(4, params))
+	assertEquals(t, gu.Has(2, params).Error(), "This assertion requires exactly 2 params (you provided 3).")
+	assertNil(t, gu.Has(3, params))
+	assertEquals(t, gu.Has(4, params).Error(), "This assertion requires exactly 4 params (you provided 3).")
+	assertNil(t, gu.HasAtLeast(2, params))
+	assertNil(t, gu.HasAtLeast(3, params))
+	assertEquals(t, gu.HasAtLeast(4, params).Error(), "This assertion requires at least 4 params (you provided 3).")
+	assertEquals(t, gu.HasAtMost(2, params).Error(), "This assertion allows 2 or fewer comparison values (you provided 3).")
+	assertNil(t, gu.HasAtMost(3, params))
+	assertNil(t, gu.HasAtMost(4, params))
 }
 
 func TestFailAndSkip(t *testing.T) {
