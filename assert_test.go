@@ -125,6 +125,22 @@ func TestApply(t *testing.T) {
 		"abcdef")
 }
 
+func TestApplyArgs(t *testing.T) {
+	// a function with fixed arguments
+	fixed := func(a, b int, c string) error {
+		if a == 0 {
+			return nil
+		}
+		return fmt.Errorf("%d.%d.%s", a, b, c)
+	}
+	assertNil(t, gu.Apply(fixed, 0, 4, "a"))                                                               // no error
+	assertEquals(t, gu.Apply(fixed, 1, 2, "b").Error(), "1.2.b")                                           // actual error
+	assertEquals(t, gu.Apply(fixed, 1, 2).Error(), "test function expecting 3 args, got 2")                // too few args
+	assertEquals(t, gu.Apply(fixed, 1, 2, "b", "c").Error(), "test function expecting 3 args, got 4")      // too many args
+	assertEquals(t, gu.Apply(fixed, 1, "a", "b").Error(), "arg 1 (\"a\") not assignable to param 1 (int)") // wrong types args
+
+}
+
 func TestAssert(t *testing.T) {
 	ct, _ := newTestT(t)
 

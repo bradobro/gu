@@ -82,7 +82,7 @@ func checkedInputs(t reflect.Type, args []interface{}) (vals []reflect.Value, er
 				return nil, fmt.Errorf("arg %d not assignable to variadic param %d (%s)", i, i, t.In(nParams))
 			}
 		} else if !vals[i].Type().AssignableTo(t.In(i)) {
-			return nil, fmt.Errorf("arg %d not assignable to param %d (%s)", i, i, t.In(i))
+			return nil, fmt.Errorf("arg %d (%#v) not assignable to param %d (%s)", i, args[i], i, t.In(i))
 		}
 	}
 	return
