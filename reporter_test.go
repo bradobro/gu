@@ -97,7 +97,7 @@ func TestReportLevels(t *testing.T) {
 	rpt.Verbosity = gu.VerbosityDebug
 	rpt.Report(ct, 1, failAll, rpt, "extra 1", "extra 2")
 	assertStringContains(t, buf.String(), "Here are some \ndetails\n")
-	assertStringContains(t, buf.String(), "gu/report_test.go")
+	assertStringContains(t, buf.String(), "gu/reporter_test.go")
 
 	ct, buf = newTestT(t)
 	rpt.Verbosity = gu.VerbosityInsane

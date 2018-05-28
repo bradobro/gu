@@ -31,14 +31,38 @@ for details.
 */
 type Assertion interface{}
 
+var errorType = reflect.TypeOf((*error)(nil)).Elem()
+
 // Apply attempts to apply args to an assertion function
 func Apply(f Assertion, args ...interface{}) (err error) {
+	n := len(args)
 	t := reflect.TypeOf(f)
-	if t.Kind() != reflect.Func || // it's a function
-		(t.NumOut() != 1) { //|| // with a single return
-		// (t.Out(0).Implements(reflect.TypeOf(err))) { // returning an error
-		badFunc := "expecting a function returning an error, got %#v (type %T)"
-		return fmt.Errorf(badFunc, f, f)
+	err = fmt.Errorf("expecting a function returning only an error, got %#v (type %T)", f, f)
+
+	// make sure f is a function
+	if t.Kind() != reflect.Func {
+		return
+	}
+
+	// convert the args to values
+	inputs := make([]reflect.Value, n)
+	for i := 0; i < n; i++ {
+		inputs[i] = reflect.ValueOf(args[i])
+	}
+
+	// verify the args
+
+	// run the function
+	outputs := reflect.ValueOf(f).Call(inputs)
+	if len(outputs) != 1 {
+		return
+	}
+	output := outputs[0].Interface()
+	if output == nil {
+		return nil
+	}
+	if result, ok := output.(error); ok {
+		return result
 	}
 	return
 }
@@ -64,15 +88,12 @@ func NewAsserter(failFast bool, maxDepth, verbosity int) (result *Asserter) {
 // AssertSkip wraps any standard Assertion for use with Go's std.testing library
 // skipping a given number of stack frames when reporting tracebacks.
 func (assert *Asserter) AssertSkip(t T, skip int, assertion Assertion, params ...interface{}) {
-
-	err := Apply(assertion, params...)
-	if err == nil {
-		return
-	}
-	assert.Reporter.Report(t, skip, err, params)
-	if assert.FailFast {
-		assert.Reporter.Log(t, "Skipping remaining assertions for this test because of FailFast.\n")
-		t.FailNow()
+	if err := Apply(assertion, params...); err != nil {
+		assert.Reporter.Report(t, skip, err, params)
+		if assert.FailFast {
+			assert.Reporter.Log(t, "Skipping remaining assertions for this test because of FailFast.\n")
+			t.FailNow()
+		}
 	}
 }
 
