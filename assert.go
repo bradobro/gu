@@ -20,7 +20,7 @@ type Namer interface {
 	Name() string // need Go 1.8 for this.
 }
 
-/* Assertion is convention for test functions.
+/*Assertion is convention for test functions.
 It is declared as an interface because the function can be of any arity and
 argument types so long as it returns an error.
 
@@ -63,6 +63,7 @@ func Apply(f Assertion, args ...interface{}) (err error) {
 	return badFunc
 }
 
+// checkedInputs ensures the assertion function is able to accept the args provided
 func checkedInputs(t reflect.Type, args []interface{}) (vals []reflect.Value, err error) {
 	nParams := t.NumIn()
 	nArgs := len(args)
@@ -79,7 +80,7 @@ func checkedInputs(t reflect.Type, args []interface{}) (vals []reflect.Value, er
 		vals[i] = reflect.ValueOf(args[i])
 		if i >= nParams { // handle variadics
 			if !vals[i].Type().AssignableTo(t.In(nParams).Elem()) {
-				return nil, fmt.Errorf("arg %d not assignable to variadic param %d (%s)", i, i, t.In(nParams))
+				return nil, fmt.Errorf("arg %d (%#v) not assignable to variadic param %d (%s)", i, args[i], i, t.In(nParams).Elem())
 			}
 		} else if !vals[i].Type().AssignableTo(t.In(i)) {
 			return nil, fmt.Errorf("arg %d (%#v) not assignable to param %d (%s)", i, args[i], i, t.In(i))

@@ -139,6 +139,36 @@ func TestApplyArgs(t *testing.T) {
 	assertEquals(t, gu.Apply(fixed, 1, 2, "b", "c").Error(), "test function expecting 3 args, got 4")      // too many args
 	assertEquals(t, gu.Apply(fixed, 1, "a", "b").Error(), "arg 1 (\"a\") not assignable to param 1 (int)") // wrong types args
 
+	// a function with untyped variadics
+	untyped := func(a, b int, c ...interface{}) error {
+		if a+b-2 == len(c) {
+			return nil
+		}
+		return fmt.Errorf("len(args) != %d + %d", a, b)
+	}
+	// no error
+	assertNil(t, gu.Apply(untyped, 0, 3, "a"))
+	// no error, mixed types
+	assertNil(t, gu.Apply(untyped, 0, 4, "a", 64.2))
+	// failure
+	assertEquals(t, gu.Apply(untyped, 0, 4, "a").Error(), "len(args) != 0 + 4")
+	// bad types
+	assertEquals(t, gu.Apply(untyped, 0, "a", 60.4).Error(), "arg 1 (\"a\") not assignable to param 1 (int)")
+
+	// typed variadic
+	typed := func(a, b int, c ...string) error {
+		if a+b-2 == len(c) {
+			return nil
+		}
+		return fmt.Errorf("len(args) != %d + %d", a, b)
+	}
+	// no error
+	assertNil(t, gu.Apply(typed, 0, 3, "a"))
+	// failure
+	assertEquals(t, gu.Apply(typed, 0, 4, "a").Error(), "len(args) != 0 + 4")
+	// error in variadic types
+	assertEquals(t, gu.Apply(typed, 0, 4, "a", 64.2).Error(), "arg 3 (64.2) not assignable to variadic param 3 (string)")
+
 }
 
 func TestAssert(t *testing.T) {
