@@ -156,7 +156,7 @@ func formatFrames(skip, max int, f formatter) (result []string) {
 	for i := skip; i < skip+max; i++ {
 		_, fullpath, line, ok := runtime.Caller(i)
 		if !ok {
-			continue
+			break
 		}
 		result = append(result, f(fullpath, line))
 	}

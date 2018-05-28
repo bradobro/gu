@@ -37,7 +37,7 @@ var (
 func TestFailureMessageParsing(t *testing.T) {
 	// test blank case
 	rpt := &gu.Reporter{}
-	s, l, d, m := rpt.Parse(errors.New(""))
+	s, l, d, m := rpt.Parse(nil)
 	assertEquals(t, s, "")
 	assertEquals(t, l, "")
 	assertEquals(t, d, "")
@@ -103,4 +103,11 @@ func TestReportLevels(t *testing.T) {
 	rpt.Verbosity = gu.VerbosityInsane
 	rpt.Report(ct, 0, failAll, rpt, "extra 1", "extra 2")
 	testStringContains(t, buf.String(), "Here are a bunch of technical details")
+}
+
+func TestStackReporting(t *testing.T) {
+
+	// Frame count too high should not cause a panic
+	f := gu.Frames(0, 1000)
+	t.Log(f)
 }

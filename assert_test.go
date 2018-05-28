@@ -16,9 +16,9 @@ func assertTrue(t gu.T, actual bool, msg string) {
 	}
 }
 
-func assertNil(t gu.T, actual bool, msg string) {
-	if !actual {
-		t.Errorf("Expected true: %s", msg)
+func assertNil(t gu.T, actual interface{}) {
+	if actual != nil {
+		t.Errorf("Expected nil: %#v", actual)
 	}
 }
 
@@ -105,7 +105,7 @@ func (t *CustomT) Logf(format string, args ...interface{}) {
 	}
 }
 
-func SKIPTestAssert(t *testing.T) {
+func TestAssert(t *testing.T) {
 	ct, _ := newTestT(t)
 
 	tt := gu.NewAsserter(false, 4, gu.VerbosityInsane)
