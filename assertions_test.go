@@ -31,6 +31,57 @@ func TestEqualAndUnequal(t *testing.T) {
 	assertEquals(t, gu.Unequal(1, 0, 0, 1, 2, 5, 9).Error(), "expected 1 != 1")
 	assertEquals(t, gu.Unequal(1).Error(), "This assertion requires at least 2 params (you provided 1).")
 }
+
+type eqStruct struct {
+	I int
+	F float32
+	L float64
+	S string
+	A []int
+}
+
+func TestStructEquality(t *testing.T) {
+	A := eqStruct{5, 5.0, 5.0, "five", []int{0, 1, 2, 3, 5}}
+	dup := eqStruct{5, 5.0, 5.0, "five", []int{0, 1, 2, 3, 5}}
+	badF := eqStruct{5, 5.2, 5.0, "five", []int{0, 1, 2, 3, 5}}
+	badA := eqStruct{5, 5.0, 5.0, "five", []int{1, 0, 2, 3, 5}}
+	badS := eqStruct{5, 5.0, 5.0, "four", []int{0, 1, 2, 3, 5}}
+
+	table := []struct {
+		desc      string
+		assertion func(params ...interface{}) (err error)
+		actual    interface{}
+		expected  interface{}
+	}{
+		// identities
+		{"same struct", gu.Equal, A, A},
+		{"equivalent struct", gu.Equal, A, dup},
+		{"nil == nil", gu.Equal, nil, nil},
+		{"same struct pointer", gu.Equal, &A, &A},
+		{"equivalent struct pointer", gu.Equal, &A, &dup},
+
+		// pointer details
+		{"struct to nil", gu.Unequal, A, nil},
+		{"struct to nil", gu.Unequal, nil, A},
+		{"struct pointers not dereferenced", gu.Unequal, A, &A},
+
+		// element differences
+		{"arrays differ", gu.Unequal, A, badA},
+		{"floats differ", gu.Unequal, A, badF},
+		{"strings differ", gu.Unequal, A, badS},
+		{"ptrs to arrays differ", gu.Unequal, &A, &badA},
+		{"ptrs to floats differ", gu.Unequal, &A, &badF},
+		{"ptrs to strings differ", gu.Unequal, &A, &badS},
+	}
+	for _, tst := range table {
+		t.Run(tst.desc, func(tt *testing.T) {
+			if err := tst.assertion(tst.actual, tst.expected); err != nil {
+				t.Error(err.Error())
+			}
+		})
+	}
+}
+
 func TestTrueFalse(t *testing.T) {
 	assertNil(t, gu.True(true, true, true))
 	assertEquals(t, gu.True(true, true, false).Error(), "expecting true, got false")
