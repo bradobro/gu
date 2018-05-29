@@ -9,9 +9,9 @@
 - Compatible: it relies on Go's testing framework and plays well with parallel testing.
 - Legible: it should make for short, easy-to-comprehend assertions.
 - Minimal:
-    - The main API is about 50 SLOC, with one main function and a helper.
-    - The reporting is about 150 SLOC, with options to dial output up or down.
-    - The basic 8 assertions and a few helpers to write your own are just over 100 SLOC.
+    - The main API is about 120 SLOC, with one main function and a helper.
+    - The reporting is about 160 SLOC, with options to dial output up or down.
+    - The basic 8 assertions and a few helpers to write your own are just over 120 SLOC.
 - Extensible: it's easy to write your own assertions *with controllable verbosity*.
 - Covered: it's major code paths should be tested in ways that it doesn't hide its own breakage.
 
