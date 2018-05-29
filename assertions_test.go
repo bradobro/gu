@@ -40,13 +40,15 @@ type eqStruct struct {
 	A []int
 }
 
-func TestStructEquality(t *testing.T) {
+func TestStructEquality(t0 *testing.T) {
+	// primitive fixtures
 	A := eqStruct{5, 5.0, 5.0, "five", []int{0, 1, 2, 3, 5}}
 	dup := eqStruct{5, 5.0, 5.0, "five", []int{0, 1, 2, 3, 5}}
 	badF := eqStruct{5, 5.2, 5.0, "five", []int{0, 1, 2, 3, 5}}
 	badA := eqStruct{5, 5.0, 5.0, "five", []int{1, 0, 2, 3, 5}}
 	badS := eqStruct{5, 5.0, 5.0, "four", []int{0, 1, 2, 3, 5}}
 
+	// build test table
 	table := []struct {
 		desc      string
 		assertion func(params ...interface{}) (err error)
@@ -72,9 +74,15 @@ func TestStructEquality(t *testing.T) {
 		{"ptrs to arrays differ", gu.Unequal, &A, &badA},
 		{"ptrs to floats differ", gu.Unequal, &A, &badF},
 		{"ptrs to strings differ", gu.Unequal, &A, &badS},
+		{"sanity check on arrays differ", gu.Equal, badA, badA},
+		{"sanity check on floats differ", gu.Equal, badF, badF},
+		{"sanity check on strings differ", gu.Equal, badS, badS},
 	}
+
+	// test against the table
+	t0.Parallel() // run subtests in parallel
 	for _, tst := range table {
-		t.Run(tst.desc, func(tt *testing.T) {
+		t0.Run(tst.desc, func(t *testing.T) {
 			if err := tst.assertion(tst.actual, tst.expected); err != nil {
 				t.Error(err.Error())
 			}
