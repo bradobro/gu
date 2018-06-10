@@ -5,6 +5,8 @@ import (
 	"reflect"
 )
 
+const DefaultSkip = 4 // stack frames to skip in normal assert
+
 // T describes the interface provided by Go's *testing.T.
 type T interface {
 	Error(args ...interface{})
@@ -121,5 +123,5 @@ func (assert *Asserter) AssertSkip(t T, skip int, assertion Assertion, params ..
 
 // Assert reports errors, attempting to guess stack depth
 func (assert *Asserter) Assert(t T, assertion Assertion, params ...interface{}) {
-	assert.AssertSkip(t, 5, assertion, params...)
+	assert.AssertSkip(t, DefaultSkip, assertion, params...)
 }
