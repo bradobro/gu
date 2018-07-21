@@ -73,9 +73,9 @@ See the documentation locally at http://localhost:6060:
 *Gu* learns from the many fine Go-testing frameworks out there:
 
 - [testing](https://golang.org/pkg/testing/): Go testing frameworks should leverage patterns and evolution in the standard testing library.
-- [testify](): inject the test harness; don't hide it
-- [goplayground] keep the core simple, return errors, not strings or panics
-- [GoConvey](): keep assertions composeable. Have them detect errors, but not manage the test run. Separate asserting from failing. (so you can pass on an Or of tests)
+- [testify](https://github.com/stretchr/testify): inject the test harness; don't hide it
+- [go-playground/assert](https://github.com/go-playground/assert) keep the core simple, return errors, not strings or panics
+- [GoConvey](https://github.com/smartystreets/goconvey): keep assertions composeable. Have them detect errors, but not manage the test run. Separate asserting from failing. (so you can pass on an Or of tests)
 - ?? separate reporting from testing. What's nice in the console (colors), in a UI (async, granular reporting), and on CI (good tracebacks) are different.
 - ?? make it configurable as needed for reporting, filtering (which tests), and environment (the sort of setup)
 - ?? don't make people rewrite solid test libraries (run Testify assertions)
