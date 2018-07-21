@@ -37,6 +37,9 @@ var errorType = reflect.TypeOf((*error)(nil)).Elem()
 
 // Apply attempts to apply args to an assertion function
 func Apply(f Assertion, args ...interface{}) (err error) {
+
+	// TODO: streamline running of different types: Testify, Convey, GoTest
+
 	var inputs, outputs []reflect.Value
 	t := reflect.TypeOf(f)
 	badFunc := fmt.Errorf("this test library expects an assertion function returning only an error, got %#v (type %T)", f, f)

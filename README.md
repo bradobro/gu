@@ -4,7 +4,7 @@
 
 [GoDoc](https://godoc.org/github.com/bradobro/gu)
 
-**Gu** strives to be:
+*Gu* strives to be:
 
 - Compatible: it relies on Go's testing framework and plays well with parallel testing.
 - Legible: it should make for short, easy-to-comprehend assertions.
@@ -15,9 +15,9 @@
 - Extensible: it's easy to write your own assertions *with controllable verbosity*.
 - Covered: it's major code paths should be tested in ways that it doesn't hide its own breakage.
 
-**gu** is focussed on unit testing--testing Go modules near their implementation in small chunks.
+*Gu* is focussed on unit testing--testing Go modules near their implementation in small chunks.
 
-(If you love BDD (and I do) look for **gu**'s upcoming sister project that does just that.)
+(If you love BDD (and I do) look for *Gu*'s upcoming sister project that does just that.)
 
 # Installation
 
@@ -68,8 +68,23 @@ See the documentation locally at http://localhost:6060:
 
 # Assertion API
 
+# Philosophy
+
+*Gu* learns from the many fine Go-testing frameworks out there:
+
+- [testing](https://golang.org/pkg/testing/): Go testing frameworks should leverage patterns and evolution in the standard testing library.
+- [testify](): inject the test harness; don't hide it
+- [goplayground] keep the core simple, return errors, not strings or panics
+- [GoConvey](): keep assertions composeable. Have them detect errors, but not manage the test run. Separate asserting from failing. (so you can pass on an Or of tests)
+- ?? separate reporting from testing. What's nice in the console (colors), in a UI (async, granular reporting), and on CI (good tracebacks) are different.
+- ?? make it configurable as needed for reporting, filtering (which tests), and environment (the sort of setup)
+- ?? don't make people rewrite solid test libraries (run Testify assertions)
+- ?? let assertion signatures check types when possible
+
 ## Basic Assertions
 
 ## Writing Your Own Assertions
+
+*Gu*
 
 # Asserter API
